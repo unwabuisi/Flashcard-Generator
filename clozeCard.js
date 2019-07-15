@@ -1,6 +1,11 @@
-
+var fs = require('fs');
 
 function ClozeCard(text,cloze){
+
+    // this is a check to make sure the user calls the constructor with the 'new'keyword
+    if (!(this instanceof ClozeCard)) {
+        return new ClozeCard(text,cloze);
+    }
 
     if (text.includes(cloze)) {
 
@@ -13,6 +18,22 @@ function ClozeCard(text,cloze){
 
         // return the full text
         this.fullText = text;
+
+        // writes cloze flashcad to .csv file in format: fullText,cloze
+        fs.appendFile('./db/clozeCard.csv', `${text},${cloze}\n`, function(err) {
+            if (err) {
+                throw err;
+            }
+        });
+
+        this.cleanDB = function() {
+                fs.writeFile('./db/clozeCard.csv','',function(err) {
+                    if (err) {
+                        throw err;
+                    }
+                    console.log('Flashcard database cleared');
+                });
+        };
     }
 
     // If the cloze term is not in the text, throw an ERROR
@@ -22,5 +43,8 @@ function ClozeCard(text,cloze){
         );
     }
 }
+
+
+module.exports = ClozeCard;
 
 
